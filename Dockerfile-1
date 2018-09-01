@@ -1,0 +1,13 @@
+# nodejs app with nginx proxy server "default.conf is the proxy file"
+
+FROM node:latest as build 
+COPY . /app
+WORKDIR /app
+RUN npm config set registry http://<your repo manager:port>
+RUN npm install
+RUN npm run build
+
+FROM nginx
+COPY ./default.conf /etc/nginx/conf.d/
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
